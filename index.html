@@ -76,6 +76,10 @@
     <select id="mode" onchange="toggleFields()">
         <option value="text">🔗 URL / Texte</option>
         <option value="wifi">📶 WiFi</option>
+        <option value="phone">📞 Téléphone</option>
+        <option value="email">📧 Email</option>
+        <option value="sms">📝 SMS</option>
+        <option value="location">📍 Localisation</option>
     </select>
     <br>
     <div id="textInput">
@@ -91,39 +95,64 @@
         </select>
         <button onclick="generateWiFiQRCode()">📡 Générer QR WiFi</button>
     </div>
+    <div id="phoneInput" style="display:none;">
+        <input type="text" id="phone" placeholder="📞 Numéro de téléphone">
+        <button onclick="generatePhoneQRCode()">📞 Générer</button>
+    </div>
+    <div id="emailInput" style="display:none;">
+        <input type="text" id="email" placeholder="📧 Adresse Email">
+        <button onclick="generateEmailQRCode()">📧 Générer</button>
+    </div>
+    <div id="smsInput" style="display:none;">
+        <input type="text" id="sms" placeholder="📝 Numéro du destinataire">
+        <input type="text" id="smsMessage" placeholder="✍️ Message">
+        <button onclick="generateSMSQRCode()">📝 Générer</button>
+    </div>
+    <div id="locationInput" style="display:none;">
+        <input type="text" id="latitude" placeholder="🌍 Latitude">
+        <input type="text" id="longitude" placeholder="📍 Longitude">
+        <button onclick="generateLocationQRCode()">📍 Générer</button>
+    </div>
     <br>
     <canvas id="qrcode"></canvas>
-    <p>📱 Utilisez votre téléphone pour scanner !</p>
-
+    <br>
+    <button onclick="downloadQRCode()">📥 Télécharger</button>
     <script>
         function toggleFields() {
-            var mode = document.getElementById("mode").value;
-            document.getElementById("textInput").style.display = mode === "text" ? "block" : "none";
-            document.getElementById("wifiInput").style.display = mode === "wifi" ? "block" : "none";
+            document.querySelectorAll('div[id$="Input"]').forEach(div => div.style.display = 'none');
+            document.getElementById(document.getElementById("mode").value + "Input").style.display = "block";
         }
-
-        function generateQRCode() {
-            var text = document.getElementById("text").value;
-            if (text.trim() === "") return;
-            new QRious({
-                element: document.getElementById("qrcode"),
-                value: text,
-                size: 200
-            });
-            document.getElementById("qrcode").style.animation = "fadeIn 0.5s";
+        function generateQRCode(value) {
+            new QRious({ element: document.getElementById("qrcode"), value: value, size: 200 });
         }
-
         function generateWiFiQRCode() {
-            var ssid = document.getElementById("ssid").value;
-            var password = document.getElementById("password").value;
-            var encryption = document.getElementById("encryption").value;
-            var wifiString = `WIFI:T:${encryption};S:${ssid};P:${password};;`;
-            new QRious({
-                element: document.getElementById("qrcode"),
-                value: wifiString,
-                size: 200
-            });
-            document.getElementById("qrcode").style.animation = "fadeIn 0.5s";
+            let ssid = document.getElementById("ssid").value;
+            let password = document.getElementById("password").value;
+            let encryption = document.getElementById("encryption").value;
+            generateQRCode(`WIFI:T:${encryption};S:${ssid};P:${password};;`);
+        }
+        function generatePhoneQRCode() {
+            generateQRCode(`tel:${document.getElementById("phone").value}`);
+        }
+        function generateEmailQRCode() {
+            generateQRCode(`mailto:${document.getElementById("email").value}`);
+        }
+        function generateSMSQRCode() {
+            let number = document.getElementById("sms").value;
+            let message = document.getElementById("smsMessage").value;
+            generateQRCode(`sms:${number}?body=${encodeURIComponent(message)}`);
+        }
+        function generateLocationQRCode() {
+            let lat = document.getElementById("latitude").value;
+            let lon = document.getElementById("longitude").value;
+            generateQRCode(`geo:${lat},${lon}`);
+        }
+        function downloadQRCode() {
+            let canvas = document.getElementById("qrcode");
+            let link = document.createElement("a");
+            link.download = "qrcode.png";
+            link.href = canvas.toDataURL();
+            link.click();
         }
     </script>
 </body>

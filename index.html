@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Générateur de QR Code 🎉</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #1e1e2e;
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        h2 {
+            font-size: 24px;
+            animation: bounce 1s infinite alternate;
+        }
+        @keyframes bounce {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-5px); }
+        }
+        input {
+            padding: 10px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            width: 80%;
+            max-width: 300px;
+            transition: 0.3s;
+        }
+        input:focus {
+            transform: scale(1.05);
+            outline: none;
+            box-shadow: 0px 0px 10px rgba(0, 123, 255, 0.7);
+        }
+        button {
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+            transform: scale(1.1);
+        }
+        canvas {
+            margin-top: 20px;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            animation: fadeIn 0.5s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <h2>✨ Générateur de QR Code 💡</h2>
+    <p>📸 Scanne et partage en un instant !</p>
+    <input type="text" id="text" placeholder="🔗 Entrez un texte ou une URL" oninput="generateQRCode()">
+    <br>
+    <canvas id="qrcode"></canvas>
+    <p>📱 Utilisez votre téléphone pour scanner !</p>
+
+    <script>
+        function generateQRCode() {
+            var text = document.getElementById("text").value;
+            if (text.trim() === "") return;
+            var qr = new QRious({
+                element: document.getElementById("qrcode"),
+                value: text,
+                size: 200
+            });
+            document.getElementById("qrcode").style.animation = "fadeIn 0.5s";
+        }
+    </script>
+</body>
+</html>
